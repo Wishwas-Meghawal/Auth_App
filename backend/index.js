@@ -1,6 +1,7 @@
 import express from "express"
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
+import { createClient } from "redis";
 
 dotenv.config();
 
@@ -8,6 +9,21 @@ dotenv.config();
 await connectDB();
 
 const app = express();
+
+const redisUrl = process.env.REDIS_URL;
+if(!redisUrl){
+  console.error("REDIS_URL is not defined in .env file");
+  process.exit(1);
+}
+
+export const redisClient =  createClient({
+  url: redisUrl,
+});
+
+redisClient.connect().then(()=>console.log("Connected to Redis")).catch((err)=>{
+  console.error("Failed to connect to Redis", err);
+  process.exit(1);
+});
 
 // middleware to parse JSON request bodies
 app.use(express.json());
