@@ -2,6 +2,7 @@ import express from "express"
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import { createClient } from "redis";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -24,9 +25,12 @@ redisClient.connect().then(()=>console.log("Connected to Redis")).catch((err)=>{
   console.error("Failed to connect to Redis", err);
   process.exit(1);
 });
-
+//middlewares
 // middleware to parse JSON request bodies
 app.use(express.json());
+
+// middleware to parse cookies
+app.use(cookieParser());
 
 // importing routes
 import userRoutes from "./routes/user.route.js";
